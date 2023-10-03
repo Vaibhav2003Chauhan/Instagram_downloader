@@ -5,8 +5,10 @@ root.geometry('1000x800')
 root.maxsize(1000,800)
 root.minsize(1000,800)
 
-txt1=Label(root,text="Instagram downloader",font="Helvetica 40 ",bg="cyan")
-txt1.pack(fill='x')
+heading1=Label(root,text="Instagram downloader",font=" Courie 40 bold ",bg="cyan")
+heading1.pack(fill='x')
+heading2=Label(root,text="By Vaibhav Chauhan", font="Times 20 ", bg="red" ,fg="black")
+heading2.pack(fill="x")
 
 
 
