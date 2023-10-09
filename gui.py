@@ -1,10 +1,14 @@
 from tkinter import *
 import instaloader
+from  time import sleep
 import threading
 ig = instaloader.Instaloader()
 # function for downloading up the  post or link 
+
 def update_box(type):
+    global way
     print(type)
+    Type.set(type)
     if type==0 or type==2:
         user_hedline.config(text="Enter Username")
         user_showout.config(text="Enter Username")
@@ -23,10 +27,25 @@ def cancel():
     pass
 #  function for checking up the Link that was enter
 
-def Check(given_link):
+def Check(given_link,type):
     if given_link=="" or given_link.find('instagram')==-1 :
+        status_label.config(text="PLease Enter a valid link or username ....")
         return False
+    status_label.config(text="starting ")
     return True
+
+# initialize downloading
+
+# def start(user_input,type):
+#     # print(user_input)
+#     # print("HELLO")
+#     # print(type)
+#     if(( type == 0 )and (not Check(user_input))) :
+#         return
+
+#     else:
+#         sleep(2)
+#         status_label.config(text="Downloding begin ....")
 
 
    
@@ -41,6 +60,7 @@ root.minsize(900,600)
 
 
 Userinput=StringVar()
+Type=IntVar()
 # main heading 
 title=Label(text="INSTAGRAM DOWNLOADER" ,font=("Courie", "32", "bold") ,bg="cyan", padx=10, pady=10)
 title.pack(fill='x')
@@ -69,8 +89,8 @@ user_input.pack(side=RIGHT)
 
 f3=Frame(root)
 f3.pack()
-b4=Button(f3,text="Start Download", font=("Times", "12", "bold"), padx=6, pady=8,width=30, command=download)
-b5=Button(f3,text="Cancel Download", font=("Times", "12", "bold"), padx=6, pady=8,width=30, command=cancel)
+b4=Button(f3,text="Start Download", font=("Times", "12", "bold"), padx=6, pady=8,width=30, command=lambda:Check(Userinput.get(),Type.get()))
+b5=Button(f3,text="Cancel Download", font=("Times", "12", "bold"), padx=6, pady=8,width=30, command=lambda:cancel)
 b4.pack(side=LEFT)
 b5.pack(side=RIGHT)
 status_label=Label(text="Ready to Downoad .....", bg='cyan', fg='black',font='Helventica 12 bold', anchor='w', height=2, padx=20) 
