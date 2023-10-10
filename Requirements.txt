@@ -1,0 +1,6 @@
+certifi==2023.7.22
+charset-normalizer==3.3.0
+idna==3.4
+instaloader==4.10
+tzdata==2023.3
+urllib3==2.0.6

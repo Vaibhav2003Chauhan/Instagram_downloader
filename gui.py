@@ -3,49 +3,108 @@ import instaloader
 from  time import sleep
 import threading
 ig = instaloader.Instaloader()
+
+downloading=0 
+queue=[]
 # function for downloading up the  post or link 
 
 def update_box(type):
-    global way
+    # global way
     print(type)
     Type.set(type)
-    if type==0 or type==2:
+    if type==0 :
         user_hedline.config(text="Enter Username")
         user_showout.config(text="Enter Username")
+    elif type==2:
+        user_hedline.config(text="Download all Post")
+        user_showout.config(text="Enter")
+
     else:
         user_hedline.config(text="Enter URL ")
         user_showout.config(text="Enter URL")
 
 # function for downloading all 
 def download():
-    var=user_input.get()
-    status_label.config(text=f"is {var}")
+    global downloading
+    downoading = 1
+    while(len(queue)>0):
+        iteml=queue.pop()
+        user_input=iteml[0]
+        type=iteml[1]
+        trie=0
+        if type==0 :
+            status_label.config(text =f" Downloading the Profile Pic for user {user_input} ....")
+        elif type==1 :
+            status_label.config(text= f"Downloading out the Video from Link {user_input} .....")
+        else:
+            status_label.config(text=f"Downloading All Post from the {user_input}....")
+
+        while trie < 3:
+            try:
+                # to download profile picture
+                if type==0:
+                    ig.download_profile(user_input , profile_pic_only=True)
+                    break
+
+                # to download video or particular post
+                elif type==1:
+                    shortcode=user_input.split("/")[4]
+                    post = instaloader.Post.from_shortcode(ig.context,shortcode)
+                    ig.download_post(post,target="downloads")
+                    break
+
+                # to download all posts 
+                else:
+                    profile = instaloader.Profile.from_username(ig.context,user_input)
+                    for post in profile.get_posts():
+                        ig.download_post(post, target=profile.username)
+                    break
+            except:
+                trie=trie+1
+                print(" Not getting output .....")
+
+        if trie==3:
+            status_label.config(text="Sorry There is an error occur......")
+        else:
+            status_label.config(text="Download Successfull .......")
+            sleep(4)
+
+        sleep(2)
+        status_label.config(text="Ready to Download ......")
+        downloading=0
+
 
 
 #  function to cancel download
 def cancel():
-    pass
+    global queue
+    queue=[]
+    
 #  function for checking up the Link that was enter
 
-def Check(given_link,type):
+def Check(given_link):
     if given_link=="" or given_link.find('instagram')==-1 :
         status_label.config(text="PLease Enter a valid link or username ....")
         return False
-    status_label.config(text="starting ")
+    
     return True
 
 # initialize downloading
 
-# def start(user_input,type):
-#     # print(user_input)
-#     # print("HELLO")
-#     # print(type)
-#     if(( type == 0 )and (not Check(user_input))) :
-#         return
+def start(user_input,type):
+    
+    global queue
+    # print(user_input)
+    # print("HELLO")
+    # print(type)
+    if type == 1  and (not Check(user_input)) :
+        return
 
-#     else:
-#         sleep(2)
-#         status_label.config(text="Downloding begin ....")
+    queue.append((user_input,type))
+    if downloading==0:
+        print(user_input)
+        t1 = threading.Thread(target=download, args=())
+        t1.start()
 
 
    
@@ -89,7 +148,7 @@ user_input.pack(side=RIGHT)
 
 f3=Frame(root)
 f3.pack()
-b4=Button(f3,text="Start Download", font=("Times", "12", "bold"), padx=6, pady=8,width=30, command=lambda:Check(Userinput.get(),Type.get()))
+b4=Button(f3,text="Start Download", font=("Times", "12", "bold"), padx=6, pady=8,width=30, command=lambda:start(Userinput.get(),Type.get()))
 b5=Button(f3,text="Cancel Download", font=("Times", "12", "bold"), padx=6, pady=8,width=30, command=lambda:cancel)
 b4.pack(side=LEFT)
 b5.pack(side=RIGHT)
